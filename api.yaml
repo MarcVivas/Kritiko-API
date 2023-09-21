@@ -6,10 +6,112 @@ info:
   version: 1.0.11
 
 paths:
-  /user/register:
-    post:
+
+          
+                
+  /user:
+    get:
       tags:
         - user
+      summary: Get the logged user 
+      description: ''
+      operationId: getLoggedUser
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+        '401':
+          description: Requires authentication
+        '404':
+          description: User not found
+  
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+
+      requestBody:
+        description: Login data
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: 
+                  type: string
+                  example: 'bob@gmail.com'
+                  description: Username or email
+                password:
+                  type: string
+                  example: superLongPassword
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'          
+        '403':
+          description: Invalid username/password supplied
+        '404':
+          description: User not found
+        '422':
+          description: Validation error
+  
+  /auth/logout:
+    get:
+      tags:
+        - auth
+      summary: Logs out current logged in user session
+      description: 'Only client! The client deletes the token from his requests and lets the token expire.'
+      operationId: logoutUser
+      parameters: []
+      responses:
+        default:
+          description: successful operation      
+  
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      summary: Refresh the authentication token
+      description: ''
+      operationId: refreshToken
+      requestBody:
+        description: Data
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  example: 34242342342342342
+          
+      responses:
+        '200':
+          description: 'Token refreshed'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: 324lo4j23o4h23jh4k2j3h4
+        
+  
+  /auth/register:
+    post:
+      tags:
+        - auth
       summary: Create user
       description: Create a new user.
       operationId: createUser
@@ -43,131 +145,8 @@ paths:
       
         '422':
           description: Data validation error
-          
-                
 
-  
-  /user/login:
-    post:
-      tags:
-        - user
-      summary: Logs user into the system
-      description: ''
-      operationId: loginUser
 
-      requestBody:
-        description: Login data
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username: 
-                  type: string
-                  example: 'bob@gmail.com'
-                  description: Username or email
-                password:
-                  type: string
-                  example: superLongPassword
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'          
-        '403':
-          description: Invalid username/password supplied
-        '404':
-          description: User not found
-        '422':
-          description: Validation error
-          
-  /user/logout:
-    get:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  /user/{username}:
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ''
-      operationId: getUserByName
-      parameters:
-        - name: username
-          in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
-    put:
-      tags:
-        - user
-      summary: Update user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
-    delete:
-      tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
 components:
   schemas:
     Token:
@@ -176,6 +155,9 @@ components:
         token:
           type: string
           example: 32432l4j23l4hl234h23kj4k32
+        refreshToken:
+          type: string
+          example: 3424230423411341qeerw3412312312321
 
     User:
       type: object
@@ -189,41 +171,34 @@ components:
         email:
           type: string
           example: john@email.com
-        password:
-          type: string
-          example: '12345678'
-   
-    ApiResponse:
+    Media:
       type: object
       properties:
-        code:
+        _id:
+          type: string
+          example: d423042342304230jal
+        title:
+          type: string
+          example: Toy story 3
+        avgScore:
+          type: number
+          example: 4.324
+        thumbnail:
+          type: string
+          example: adakjdaksdhkasjd.xcinm
+        description:
+          type: string
+          example: Living toys movie
+        mediaType: 
           type: integer
-          format: int32
-        type:
+          example: 3
+        releaseDate:
           type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
-  requestBodies:
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
-  securitySchemes:
-    petstore_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-          scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
+          example: '23-3-01'
+        
+          
+        
+          
+
+   
+ 

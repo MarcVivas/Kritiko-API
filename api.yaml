@@ -146,6 +146,84 @@ paths:
         '422':
           description: Data validation error
 
+  /media:
+    get:
+      tags:
+        - media
+      summary: Get all your reviewed media
+      description: Get all your reviewed media
+      responses:
+        '200':
+          description: Media returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Media'          
+
+                  links:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                        example: http://127.0.0.1:8000/media?page=4
+                      last:
+                        type: string
+                        example: http://127.0.0.1:8000/media?page=13
+                      prev:
+                        type: string
+                        example: http://127.0.0.1:8000/media?page=3
+                      next:
+                        type: string
+                        example: http://127.0.0.1:8000/media?page=5
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 3
+                      from:
+                        type: integer
+                        example: 2
+                      last_page:
+                        type: integer
+                        example: 13
+                      links:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+
+                            url:
+                              type: string
+                              example: http://127.0.0.1:8000/media?page=3
+                            label:
+                              type: integer
+                              example: 3
+                            active:
+                              type: boolean
+                              example: true
+                  path:
+                    type: string
+                    example: http://127.0.0.1:8000/media
+                  per_page:
+                    type: integer
+                    example: 10
+                  to:
+                    type: integer
+                    example: 4
+                  total:
+                    type: integer
+                    example: 130
+
+        '401':
+          description: Requires authentication
+    
+      
 
 components:
   schemas:
